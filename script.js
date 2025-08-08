@@ -50,45 +50,8 @@ const observer = new IntersectionObserver((entries) => {
 const animateElements = document.querySelectorAll('.service-card, .stat-item, .contact-item, .credential-item');
 animateElements.forEach(el => observer.observe(el));
 
-// 마우스 추적 효과
-document.addEventListener('mousemove', (e) => {
-    const cursor = document.querySelector('.custom-cursor');
-    if (cursor) {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-    }
-});
-
-// 커스텀 커서 생성
-const customCursor = document.createElement('div');
-customCursor.className = 'custom-cursor';
-customCursor.style.cssText = `
-    position: fixed;
-    width: 20px;
-    height: 20px;
-    background: rgba(59, 130, 246, 0.3);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10000;
-    transition: all 0.1s ease;
-    mix-blend-mode: difference;
-`;
-document.body.appendChild(customCursor);
-
-// 호버 시 커서 확대
-document.addEventListener('mouseover', (e) => {
-    if (e.target.matches('a, button, .service-card, .contact-item, .credential-item')) {
-        customCursor.style.transform = 'scale(2)';
-        customCursor.style.background = 'rgba(59, 130, 246, 0.5)';
-    }
-});
-
-document.addEventListener('mouseout', (e) => {
-    if (e.target.matches('a, button, .service-card, .contact-item, .credential-item')) {
-        customCursor.style.transform = 'scale(1)';
-        customCursor.style.background = 'rgba(59, 130, 246, 0.3)';
-    }
-});
+// 커스텀 커서 기능 비활성화 (기존 기능 제거)
+// 의도적으로 비워 둡니다.
 
 // 텍스트 하이라이트 효과
 function addHighlightEffect() {
@@ -542,7 +505,7 @@ progressBar.style.cssText = `
     left: 0;
     width: 0%;
     height: 3px;
-    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    background: var(--primary-color);
     z-index: 10001;
     transition: width 0.1s ease;
 `;
@@ -612,22 +575,8 @@ const scrollAnimations = () => {
 
 window.addEventListener('scroll', scrollAnimations);
 
-// 마우스 움직임에 따른 배경 효과
-document.addEventListener('mousemove', (e) => {
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-        
-        hero.style.background = `
-            linear-gradient(135deg, 
-                var(--primary-color) 0%, 
-                var(--primary-light) ${x * 100}%, 
-                var(--accent-color) ${y * 100}%
-            )
-        `;
-    }
-});
+// 배경 그라디언트 효과 제거
+document.addEventListener('mousemove', () => {});
 
 // 텍스트 선택 효과
 document.addEventListener('selectionchange', () => {
