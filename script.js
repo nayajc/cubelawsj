@@ -124,14 +124,21 @@ function addTypingEffect() {
 function optimizePointerEvents() {
     const heroTitle = document.querySelector('.hero-title');
     if (heroTitle) {
-        // 글로우 효과 요소들에 포인터 이벤트 비활성화
-        const glowElements = heroTitle.querySelectorAll('::before, ::after');
-        glowElements.forEach(element => {
-            element.style.pointerEvents = 'none';
-        });
-        
         // 메인 텍스트는 클릭 가능하도록 유지
         heroTitle.style.pointerEvents = 'auto';
+        heroTitle.style.cursor = 'pointer';
+        
+        // 글로우 효과 요소들에 포인터 이벤트 완전 비활성화
+        const style = document.createElement('style');
+        style.textContent = `
+            .hero-title[data-text]::before {
+                pointer-events: none !important;
+                touch-action: none !important;
+                -webkit-touch-callout: none !important;
+                -webkit-tap-highlight-color: transparent !important;
+            }
+        `;
+        document.head.appendChild(style);
         
         // 호버 효과 개선
         heroTitle.addEventListener('mouseenter', () => {
@@ -139,6 +146,22 @@ function optimizePointerEvents() {
         });
         
         heroTitle.addEventListener('mouseleave', () => {
+            heroTitle.style.transform = 'scale(1)';
+        });
+        
+        // 클릭 이벤트 추가
+        heroTitle.addEventListener('click', () => {
+            console.log('오수진 변호사 제목이 클릭되었습니다!');
+            // 여기에 클릭 시 실행할 기능을 추가할 수 있습니다
+        });
+        
+        // 터치 이벤트도 지원
+        heroTitle.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            heroTitle.style.transform = 'scale(0.98)';
+        });
+        
+        heroTitle.addEventListener('touchend', () => {
             heroTitle.style.transform = 'scale(1)';
         });
     }
