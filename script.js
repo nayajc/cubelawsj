@@ -50,6 +50,129 @@ const observer = new IntersectionObserver((entries) => {
 const animateElements = document.querySelectorAll('.service-card, .stat-item, .contact-item, .credential-item');
 animateElements.forEach(el => observer.observe(el));
 
+// 마우스 추적 효과
+document.addEventListener('mousemove', (e) => {
+    const cursor = document.querySelector('.custom-cursor');
+    if (cursor) {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+    }
+});
+
+// 커스텀 커서 생성
+const customCursor = document.createElement('div');
+customCursor.className = 'custom-cursor';
+customCursor.style.cssText = `
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    background: rgba(59, 130, 246, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transition: all 0.1s ease;
+    mix-blend-mode: difference;
+`;
+document.body.appendChild(customCursor);
+
+// 호버 시 커서 확대
+document.addEventListener('mouseover', (e) => {
+    if (e.target.matches('a, button, .service-card, .contact-item, .credential-item')) {
+        customCursor.style.transform = 'scale(2)';
+        customCursor.style.background = 'rgba(59, 130, 246, 0.5)';
+    }
+});
+
+document.addEventListener('mouseout', (e) => {
+    if (e.target.matches('a, button, .service-card, .contact-item, .credential-item')) {
+        customCursor.style.transform = 'scale(1)';
+        customCursor.style.background = 'rgba(59, 130, 246, 0.3)';
+    }
+});
+
+// 텍스트 하이라이트 효과
+function addHighlightEffect() {
+    const textElements = document.querySelectorAll('h1, h2, h3, p');
+    textElements.forEach(element => {
+        if (element.textContent.length > 10) {
+            element.classList.add('highlight');
+        }
+    });
+}
+
+// 타이핑 효과
+function addTypingEffect() {
+    const heroTitle = document.querySelector('.hero-title');
+    if (heroTitle) {
+        const text = heroTitle.textContent;
+        heroTitle.textContent = '';
+        heroTitle.classList.add('typing-effect');
+        
+        let i = 0;
+        const typeWriter = () => {
+            if (i < text.length) {
+                heroTitle.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        };
+        typeWriter();
+    }
+}
+
+// 파티클 효과
+function createParticles() {
+    const particlesContainer = document.createElement('div');
+    particlesContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    `;
+    document.body.appendChild(particlesContainer);
+
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            animation: float-particle ${Math.random() * 10 + 10}s linear infinite;
+        `;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// 파티클 애니메이션 CSS 추가
+const particleStyle = document.createElement('style');
+particleStyle.textContent = `
+    @keyframes float-particle {
+        0% {
+            transform: translateY(100vh) rotate(0deg);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100px) rotate(360deg);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(particleStyle);
+
 // 챗봇 기능
 const chatbotResponses = {
     '안녕': '안녕하세요! 법률 상담 챗봇입니다. 어떤 도움이 필요하신가요?',
@@ -199,11 +322,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // 서비스 카드 호버 효과
 document.querySelectorAll('.service-card').forEach(card => {
     card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-10px) scale(1.02)';
+        this.style.transform = 'translateY(-15px) scale(1.03)';
+        this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
     });
     
     card.addEventListener('mouseleave', function() {
         this.style.transform = 'translateY(0) scale(1)';
+        this.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
     });
 });
 
@@ -225,6 +350,7 @@ document.querySelectorAll('.contact-item').forEach(item => {
                     border-radius: var(--border-radius);
                     z-index: 10000;
                     animation: slideIn 0.3s ease-out;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
                 `;
                 notification.textContent = '클립보드에 복사되었습니다!';
                 document.body.appendChild(notification);
@@ -252,8 +378,36 @@ style.textContent = `
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(100%); opacity: 0; }
     }
+    
+    .ripple {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .ripple::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+    
+    .ripple:active::before {
+        width: 300px;
+        height: 300px;
+    }
 `;
 document.head.appendChild(style);
+
+// 리플 효과 추가
+document.querySelectorAll('.btn, .service-card, .contact-item').forEach(element => {
+    element.classList.add('ripple');
+});
 
 // 페이지 로드 시 초기 애니메이션
 window.addEventListener('load', () => {
@@ -262,6 +416,9 @@ window.addEventListener('load', () => {
     
     setTimeout(() => {
         document.body.style.opacity = '1';
+        addHighlightEffect();
+        addTypingEffect();
+        createParticles();
     }, 100);
 });
 
@@ -319,5 +476,245 @@ function handleSwipe() {
         }
     }
 }
+
+// 키보드 네비게이션
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+    }
+});
+
+// 스크롤 시 요소들에 애니메이션 추가
+const scrollAnimations = () => {
+    const elements = document.querySelectorAll('.service-card, .stat-item, .contact-item, .credential-item');
+    elements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < window.innerHeight - elementVisible) {
+            element.classList.add('fade-in-up');
+        }
+    });
+};
+
+window.addEventListener('scroll', scrollAnimations);
+
+// 마우스 움직임에 따른 배경 효과
+document.addEventListener('mousemove', (e) => {
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        
+        hero.style.background = `
+            linear-gradient(135deg, 
+                var(--primary-color) 0%, 
+                var(--primary-light) ${x * 100}%, 
+                var(--accent-color) ${y * 100}%
+            )
+        `;
+    }
+});
+
+// 텍스트 선택 효과
+document.addEventListener('selectionchange', () => {
+    const selection = window.getSelection();
+    if (selection.toString().length > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        
+        // 선택된 텍스트 하이라이트
+        const highlight = document.createElement('div');
+        highlight.style.cssText = `
+            position: absolute;
+            top: ${rect.top}px;
+            left: ${rect.left}px;
+            width: ${rect.width}px;
+            height: ${rect.height}px;
+            background: rgba(59, 130, 246, 0.2);
+            pointer-events: none;
+            z-index: 1000;
+            border-radius: 2px;
+        `;
+        document.body.appendChild(highlight);
+        
+        setTimeout(() => {
+            document.body.removeChild(highlight);
+        }, 1000);
+    }
+});
+
+// 마그네틱 효과
+function addMagneticEffect() {
+    const magneticElements = document.querySelectorAll('.btn, .service-card, .contact-item');
+    
+    magneticElements.forEach(element => {
+        element.classList.add('magnetic');
+        
+        element.addEventListener('mousemove', (e) => {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            element.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px) scale(1.02)`;
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            element.style.transform = 'translate(0, 0) scale(1)';
+        });
+    });
+}
+
+// 3D 카드 효과
+function add3DEffect() {
+    const cards = document.querySelectorAll('.service-card, .contact-item');
+    
+    cards.forEach(card => {
+        card.classList.add('card-3d');
+        
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / 10;
+            const rotateY = (centerX - x) / 10;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+        });
+    });
+}
+
+// 네온 효과 추가
+function addNeonEffect() {
+    const neonElements = document.querySelectorAll('.hero-title, .section-title');
+    neonElements.forEach(element => {
+        element.classList.add('neon');
+    });
+}
+
+// 물결 효과 추가
+function addWaveEffect() {
+    const waveElements = document.querySelectorAll('.btn, .service-card');
+    waveElements.forEach(element => {
+        element.classList.add('wave');
+    });
+}
+
+// 스크롤 기반 애니메이션
+function addScrollAnimations() {
+    const scrollElements = document.querySelectorAll('.service-card, .stat-item, .contact-item');
+    scrollElements.forEach(element => {
+        element.classList.add('scroll-animate');
+    });
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    scrollElements.forEach(element => observer.observe(element));
+}
+
+// 마우스 움직임에 따른 배경 그라디언트
+function addDynamicBackground() {
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            hero.style.background = `
+                linear-gradient(135deg, 
+                    var(--primary-color) 0%, 
+                    var(--primary-light) ${x * 100}%, 
+                    var(--accent-color) ${y * 100}%
+                )
+            `;
+        });
+    }
+}
+
+// 키보드 인터랙션
+function addKeyboardInteractions() {
+    document.addEventListener('keydown', (e) => {
+        switch(e.key) {
+            case 'ArrowUp':
+                window.scrollBy(0, -100);
+                break;
+            case 'ArrowDown':
+                window.scrollBy(0, 100);
+                break;
+            case 'Home':
+                window.scrollTo(0, 0);
+                break;
+            case 'End':
+                window.scrollTo(0, document.body.scrollHeight);
+                break;
+        }
+    });
+}
+
+// 터치 제스처
+function addTouchGestures() {
+    let startX = 0;
+    let startY = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    });
+    
+    document.addEventListener('touchend', (e) => {
+        const endX = e.changedTouches[0].clientX;
+        const endY = e.changedTouches[0].clientY;
+        
+        const diffX = startX - endX;
+        const diffY = startY - endY;
+        
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            if (diffX > 50) {
+                // 왼쪽 스와이프
+                console.log('Left swipe');
+            } else if (diffX < -50) {
+                // 오른쪽 스와이프
+                console.log('Right swipe');
+            }
+        } else {
+            if (diffY > 50) {
+                // 위로 스와이프
+                window.scrollBy(0, -100);
+            } else if (diffY < -50) {
+                // 아래로 스와이프
+                window.scrollBy(0, 100);
+            }
+        }
+    });
+}
+
+// 페이지 로드 시 모든 효과 초기화
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        addMagneticEffect();
+        add3DEffect();
+        addNeonEffect();
+        addWaveEffect();
+        addScrollAnimations();
+        addDynamicBackground();
+        addKeyboardInteractions();
+        addTouchGestures();
+    }, 1000);
+});
 
 console.log('변호사 웹사이트가 성공적으로 로드되었습니다!');
