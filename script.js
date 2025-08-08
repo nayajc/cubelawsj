@@ -120,6 +120,30 @@ function addTypingEffect() {
     }
 }
 
+// 포인터 이벤트 최적화
+function optimizePointerEvents() {
+    const heroTitle = document.querySelector('.hero-title');
+    if (heroTitle) {
+        // 글로우 효과 요소들에 포인터 이벤트 비활성화
+        const glowElements = heroTitle.querySelectorAll('::before, ::after');
+        glowElements.forEach(element => {
+            element.style.pointerEvents = 'none';
+        });
+        
+        // 메인 텍스트는 클릭 가능하도록 유지
+        heroTitle.style.pointerEvents = 'auto';
+        
+        // 호버 효과 개선
+        heroTitle.addEventListener('mouseenter', () => {
+            heroTitle.style.transform = 'scale(1.02)';
+        });
+        
+        heroTitle.addEventListener('mouseleave', () => {
+            heroTitle.style.transform = 'scale(1)';
+        });
+    }
+}
+
 // 파티클 효과
 function createParticles() {
     const particlesContainer = document.createElement('div');
@@ -212,6 +236,71 @@ function generateResponse(userMessage) {
     
     // 기본 응답 중 랜덤 선택
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+}
+
+// 예약 관련 기능
+function addAppointmentFeatures() {
+    // 예약 버튼 클릭 시 캘린더로 스크롤
+    const appointmentButtons = document.querySelectorAll('a[href="#appointment"]');
+    appointmentButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const appointmentSection = document.getElementById('appointment');
+            if (appointmentSection) {
+                appointmentSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // 예약 섹션에 하이라이트 효과
+                setTimeout(() => {
+                    appointmentSection.style.animation = 'pulse 1s ease-in-out';
+                    setTimeout(() => {
+                        appointmentSection.style.animation = '';
+                    }, 1000);
+                }, 500);
+            }
+        });
+    });
+    
+    // 예약 정보 클릭 시 복사 기능
+    const appointmentInfo = document.querySelector('.appointment-info li');
+    if (appointmentInfo) {
+        appointmentInfo.addEventListener('click', function() {
+            const text = this.textContent;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('예약 정보가 클립보드에 복사되었습니다!');
+                });
+            }
+        });
+    }
+}
+
+// 알림 표시 함수
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--primary-color);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: var(--border-radius);
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 2000);
 }
 
 // 메시지 추가 함수
@@ -714,6 +803,8 @@ window.addEventListener('load', () => {
         addDynamicBackground();
         addKeyboardInteractions();
         addTouchGestures();
+        addAppointmentFeatures();
+        optimizePointerEvents();
     }, 1000);
 });
 
