@@ -53,43 +53,26 @@ animateElements.forEach(el => observer.observe(el));
 // 커스텀 커서 기능 비활성화 (기존 기능 제거)
 // 의도적으로 비워 둡니다.
 
-// 텍스트 하이라이트 효과
+// 텍스트 하이라이트 효과 비활성화
 function addHighlightEffect() {
-    const textElements = document.querySelectorAll('h1, h2, h3, p');
-    textElements.forEach(element => {
-        if (element.textContent.length > 10) {
-            element.classList.add('highlight');
-        }
-    });
+    document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
 }
 
-// 타이핑 효과
+// 타이핑 효과 비활성화
 function addTypingEffect() {
     const heroTitle = document.querySelector('.hero-title');
     if (heroTitle) {
-        const text = heroTitle.textContent;
-        heroTitle.textContent = '';
-        heroTitle.classList.add('typing-effect');
-        
-        let i = 0;
-        const typeWriter = () => {
-            if (i < text.length) {
-                heroTitle.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 100);
-            }
-        };
-        typeWriter();
+        heroTitle.classList.remove('typing-effect');
     }
 }
 
-// 포인터 이벤트 최적화
+// 포인터 이벤트 최적화 (텍스트 변형 이벤트 제거)
 function optimizePointerEvents() {
     const heroTitle = document.querySelector('.hero-title');
     if (heroTitle) {
         // 메인 텍스트는 클릭 가능하도록 유지
         heroTitle.style.pointerEvents = 'auto';
-        heroTitle.style.cursor = 'pointer';
+        heroTitle.style.cursor = 'auto';
         
         // 글로우 효과 요소들에 포인터 이벤트 완전 비활성화
         const style = document.createElement('style');
@@ -103,30 +86,8 @@ function optimizePointerEvents() {
         `;
         document.head.appendChild(style);
         
-        // 호버 효과 개선
-        heroTitle.addEventListener('mouseenter', () => {
-            heroTitle.style.transform = 'scale(1.02)';
-        });
-        
-        heroTitle.addEventListener('mouseleave', () => {
-            heroTitle.style.transform = 'scale(1)';
-        });
-        
-        // 클릭 이벤트 추가
-        heroTitle.addEventListener('click', () => {
-            console.log('오수진 변호사 제목이 클릭되었습니다!');
-            // 여기에 클릭 시 실행할 기능을 추가할 수 있습니다
-        });
-        
-        // 터치 이벤트도 지원
-        heroTitle.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            heroTitle.style.transform = 'scale(0.98)';
-        });
-        
-        heroTitle.addEventListener('touchend', () => {
-            heroTitle.style.transform = 'scale(1)';
-        });
+        // 기존에 등록되었을 수 있는 변형 스타일 초기화
+        heroTitle.style.transform = 'none';
     }
 }
 
@@ -654,12 +615,9 @@ function add3DEffect() {
     });
 }
 
-// 네온 효과 추가
+// 네온 효과 제거
 function addNeonEffect() {
-    const neonElements = document.querySelectorAll('.hero-title, .section-title');
-    neonElements.forEach(element => {
-        element.classList.add('neon');
-    });
+    document.querySelectorAll('.neon').forEach(el => el.classList.remove('neon'));
 }
 
 // 물결 효과 추가
