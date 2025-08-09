@@ -820,7 +820,7 @@ body {
     overflow: hidden;
     box-shadow: var(--shadow);
     transition: var(--transition);
-    min-height: 600px;
+    height: 560px; /* 고정 뷰포트 높이로 내부 스크롤 방지 및 크롭 */
 }
 
 .calendar-wrapper:hover {
@@ -831,10 +831,29 @@ body {
 .calendar-wrapper iframe {
     border-radius: var(--border-radius);
     transition: var(--transition);
+    height: 1100px;           /* 실제 콘텐츠보다 충분히 크게 설정해 스크롤바 제거 */
+    width: 100%;
+    transform: translateY(-120px); /* 상단 헤더 영역 크롭 */
 }
 
 .calendar-wrapper:hover iframe {
     transform: scale(1.01);
+}
+
+/* 반응형 캘린더 크롭 보정 */
+@media (max-width: 1024px) {
+    .calendar-wrapper { height: 520px; }
+    .calendar-wrapper iframe { height: 1000px; transform: translateY(-100px); }
+}
+
+@media (max-width: 768px) {
+    .calendar-wrapper { height: 500px; }
+    .calendar-wrapper iframe { height: 900px; transform: translateY(-90px); }
+}
+
+@media (max-width: 480px) {
+    .calendar-wrapper { height: 480px; }
+    .calendar-wrapper iframe { height: 850px; transform: translateY(-80px); }
 }
 
 /* 챗봇 섹션 */
