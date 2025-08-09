@@ -442,34 +442,12 @@ body {
 }
 
 .about-content {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 4rem;
-    align-items: center;
+    display: block;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.about-image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.about-profile-image {
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: center 20%;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border: 4px solid var(--primary-light);
-    transition: var(--transition);
-}
-
-.about-profile-image:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-    border-color: var(--accent-color);
-}
 
 .about-text h3 {
     font-size: 2rem;
@@ -1382,14 +1360,7 @@ body {
     }
 
     .about-content {
-        grid-template-columns: 1fr;
-        gap: 2rem;
         text-align: center;
-    }
-
-    .about-profile-image {
-        width: 200px;
-        height: 200px;
     }
 
     .credentials {
