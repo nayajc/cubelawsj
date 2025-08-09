@@ -20,17 +20,36 @@ navLinks.forEach(link => {
     });
 });
 
-// 스크롤 시 네비게이션 스타일 변경
-window.addEventListener('scroll', () => {
+// 스크롤 UI 업데이트를 rAF로 묶어 부드럽게 처리
+let scrollTicking = false;
+function updateScrollUI() {
     const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+    const scrolled = window.scrollY > 100;
+    navbar.style.background = scrolled ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 0.95)';
+    navbar.style.boxShadow = scrolled ? '0 4px 20px rgba(0, 0, 0, 0.1)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+
+    // 진행바 업데이트
+    if (progressBar) {
+        const scrollTop = window.pageYOffset;
+        const docHeight = document.body.offsetHeight - window.innerHeight;
+        const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = scrollPercent + '%';
     }
-});
+
+    // 가벼운 스크롤 애니메이션 트리거
+    if (typeof scrollAnimations === 'function') {
+        scrollAnimations();
+    }
+
+    scrollTicking = false;
+}
+
+window.addEventListener('scroll', () => {
+    if (!scrollTicking) {
+        scrollTicking = true;
+        requestAnimationFrame(updateScrollUI);
+    }
+}, { passive: true });
 
 // 스크롤 애니메이션
 const observerOptions = {
@@ -493,12 +512,12 @@ let touchEndY = 0;
 
 document.addEventListener('touchstart', (e) => {
     touchStartY = e.changedTouches[0].screenY;
-});
+}, { passive: true });
 
 document.addEventListener('touchend', (e) => {
     touchEndY = e.changedTouches[0].screenY;
     handleSwipe();
-});
+}, { passive: true });
 
 function handleSwipe() {
     const swipeThreshold = 50;
@@ -534,7 +553,7 @@ const scrollAnimations = () => {
     });
 };
 
-window.addEventListener('scroll', scrollAnimations);
+// scrollAnimations는 updateScrollUI에서 호출
 
 // 배경 그라디언트 효과 제거
 document.addEventListener('mousemove', () => {});
