@@ -286,7 +286,7 @@ function addMessage(message, isUser = false) {
 }
 
 // 메시지 전송 함수
-function sendChatMessage() {
+async function sendChatMessage() {
     const message = chatInput.value.trim();
     if (message === '') return;
     
@@ -301,12 +301,27 @@ function sendChatMessage() {
     chatMessages.appendChild(loadingDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
-    // 챗봇 응답 (실제로는 API 호출)
-    setTimeout(() => {
+    try {
+        // 대화 이력 구성
+        const history = [...document.querySelectorAll('.message')].map(m => {
+            const role = m.classList.contains('user-message') ? 'user' : 'assistant';
+            return { role, content: m.textContent.trim() };
+        });
+
+        const res = await fetch('/api/legal-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: history })
+        });
+
+        if (!res.ok) throw new Error('API error');
+        const { content } = await res.json();
         chatMessages.removeChild(loadingDiv);
-        const response = generateResponse(message);
-        addMessage(response, false);
-    }, 1000 + Math.random() * 1000); // 1-2초 랜덤 지연
+        addMessage(content || '죄송합니다. 답변을 생성하지 못했습니다.', false);
+    } catch (e) {
+        chatMessages.removeChild(loadingDiv);
+        addMessage('일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', false);
+    }
 }
 
 // 엔터키로 메시지 전송
