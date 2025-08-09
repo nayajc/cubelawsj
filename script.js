@@ -314,13 +314,16 @@ async function sendChatMessage() {
             body: JSON.stringify({ messages: history })
         });
 
-        if (!res.ok) throw new Error('API error');
+        if (!res.ok) {
+            const errText = await res.text().catch(() => 'API error');
+            throw new Error(errText || 'API error');
+        }
         const { content } = await res.json();
         chatMessages.removeChild(loadingDiv);
         addMessage(content || '죄송합니다. 답변을 생성하지 못했습니다.', false);
     } catch (e) {
         chatMessages.removeChild(loadingDiv);
-        addMessage('일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', false);
+        addMessage((e && e.message) ? e.message : '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', false);
     }
 }
 
