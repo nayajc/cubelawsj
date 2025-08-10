@@ -110,8 +110,13 @@ function optimizePointerEvents() {
     }
 }
 
-// 파티클 효과
+// 파티클 효과 - 모바일 성능 최적화를 위해 비활성화
 function createParticles() {
+    // 모바일에서는 파티클 효과를 생성하지 않음
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+        return;
+    }
+    
     const particlesContainer = document.createElement('div');
     particlesContainer.style.cssText = `
         position: fixed;
@@ -124,7 +129,8 @@ function createParticles() {
     `;
     document.body.appendChild(particlesContainer);
 
-    for (let i = 0; i < 50; i++) {
+    // 파티클 수를 줄여서 성능 향상
+    for (let i = 0; i < 20; i++) {
         const particle = document.createElement('div');
         particle.style.cssText = `
             position: absolute;
@@ -392,18 +398,20 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// 서비스 카드 호버 효과
-document.querySelectorAll('.service-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-15px) scale(1.03)';
-        this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+// 서비스 카드 호버 효과 - 모바일 성능 최적화를 위해 비활성화
+if (window.innerWidth > 768 && !('ontouchstart' in window)) {
+    document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-15px) scale(1.03)';
+            this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+        });
     });
-    
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-        this.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-    });
-});
+}
 
 // 연락처 정보 클릭 시 복사
 document.querySelectorAll('.contact-item').forEach(item => {
@@ -482,39 +490,47 @@ document.querySelectorAll('.btn, .service-card, .contact-item').forEach(element 
     element.classList.add('ripple');
 });
 
-// 페이지 로드 시 초기 애니메이션
+// 페이지 로드 시 초기 애니메이션 - 모바일 성능 최적화
 window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease-in';
-    
-    setTimeout(() => {
-        document.body.style.opacity = '1';
+    // 모바일에서는 페이드인 효과를 간소화
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
         addHighlightEffect();
         addTypingEffect();
-        createParticles();
-    }, 100);
+    } else {
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.5s ease-in';
+        
+        setTimeout(() => {
+            document.body.style.opacity = '1';
+            addHighlightEffect();
+            addTypingEffect();
+            createParticles();
+        }, 100);
+    }
 });
 
-// 스크롤 진행률 표시
-const progressBar = document.createElement('div');
-progressBar.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background: var(--primary-color);
-    z-index: 10001;
-    transition: width 0.1s ease;
-`;
-document.body.appendChild(progressBar);
+// 스크롤 진행률 표시 - 모바일 성능 최적화를 위해 비활성화
+if (window.innerWidth > 768 && !('ontouchstart' in window)) {
+    const progressBar = document.createElement('div');
+    progressBar.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: var(--primary-color);
+        z-index: 10001;
+        transition: width 0.1s ease;
+    `;
+    document.body.appendChild(progressBar);
 
-window.addEventListener('scroll', () => {
-    const scrollTop = window.pageYOffset;
-    const docHeight = document.body.offsetHeight - window.innerHeight;
-    const scrollPercent = (scrollTop / docHeight) * 100;
-    progressBar.style.width = scrollPercent + '%';
-});
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset;
+        const docHeight = document.body.offsetHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = scrollPercent + '%';
+    });
+}
 
 // 모바일 메뉴 외부 클릭 시 닫기
 document.addEventListener('click', (e) => {
@@ -576,36 +592,43 @@ const scrollAnimations = () => {
 // 배경 그라디언트 효과 제거
 document.addEventListener('mousemove', () => {});
 
-// 텍스트 선택 효과
-document.addEventListener('selectionchange', () => {
-    const selection = window.getSelection();
-    if (selection.toString().length > 0) {
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-        
-        // 선택된 텍스트 하이라이트
-        const highlight = document.createElement('div');
-        highlight.style.cssText = `
-            position: absolute;
-            top: ${rect.top}px;
-            left: ${rect.left}px;
-            width: ${rect.width}px;
-            height: ${rect.height}px;
-            background: rgba(59, 130, 246, 0.2);
-            pointer-events: none;
-            z-index: 1000;
-            border-radius: 2px;
-        `;
-        document.body.appendChild(highlight);
-        
-        setTimeout(() => {
-            document.body.removeChild(highlight);
-        }, 1000);
-    }
-});
+// 텍스트 선택 효과 - 모바일 성능 최적화를 위해 비활성화
+if (window.innerWidth > 768 && !('ontouchstart' in window)) {
+    document.addEventListener('selectionchange', () => {
+        const selection = window.getSelection();
+        if (selection.toString().length > 0) {
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            
+            // 선택된 텍스트 하이라이트
+            const highlight = document.createElement('div');
+            highlight.style.cssText = `
+                position: absolute;
+                top: ${rect.top}px;
+                left: ${rect.left}px;
+                width: ${rect.width}px;
+                height: ${rect.height}px;
+                background: rgba(59, 130, 246, 0.2);
+                pointer-events: none;
+                z-index: 1000;
+                border-radius: 2px;
+            `;
+            document.body.appendChild(highlight);
+            
+            setTimeout(() => {
+                document.body.removeChild(highlight);
+            }, 1000);
+        }
+    });
+}
 
-// 마그네틱 효과
+// 마그네틱 효과 - 모바일 성능 최적화를 위해 비활성화
 function addMagneticEffect() {
+    // 모바일에서는 마그네틱 효과를 적용하지 않음
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+        return;
+    }
+    
     const magneticElements = document.querySelectorAll('.btn, .service-card, .contact-item');
     
     magneticElements.forEach(element => {
@@ -625,8 +648,13 @@ function addMagneticEffect() {
     });
 }
 
-// 3D 카드 효과
+// 3D 카드 효과 - 모바일 성능 최적화를 위해 비활성화
 function add3DEffect() {
+    // 모바일에서는 3D 효과를 적용하지 않음
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+        return;
+    }
+    
     const cards = document.querySelectorAll('.service-card, .contact-item');
     
     cards.forEach(card => {
@@ -657,16 +685,26 @@ function addNeonEffect() {
     document.querySelectorAll('.neon').forEach(el => el.classList.remove('neon'));
 }
 
-// 물결 효과 추가
+// 물결 효과 추가 - 모바일 성능 최적화를 위해 비활성화
 function addWaveEffect() {
+    // 모바일에서는 물결 효과를 적용하지 않음
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+        return;
+    }
+    
     const waveElements = document.querySelectorAll('.btn, .service-card');
     waveElements.forEach(element => {
         element.classList.add('wave');
     });
 }
 
-// 스크롤 기반 애니메이션
+// 스크롤 기반 애니메이션 - 모바일 성능 최적화를 위해 비활성화
 function addScrollAnimations() {
+    // 모바일에서는 스크롤 애니메이션을 적용하지 않음
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+        return;
+    }
+    
     const scrollElements = document.querySelectorAll('.service-card, .stat-item, .contact-item');
     scrollElements.forEach(element => {
         element.classList.add('scroll-animate');
@@ -683,8 +721,13 @@ function addScrollAnimations() {
     scrollElements.forEach(element => observer.observe(element));
 }
 
-// 마우스 움직임에 따른 배경 그라디언트
+// 마우스 움직임에 따른 배경 그라디언트 - 모바일 성능 최적화를 위해 비활성화
 function addDynamicBackground() {
+    // 모바일에서는 동적 배경을 적용하지 않음
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+        return;
+    }
+    
     const hero = document.querySelector('.hero');
     if (hero) {
         document.addEventListener('mousemove', (e) => {

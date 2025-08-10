@@ -27,6 +27,22 @@ body {
     line-height: 1.6;
     color: var(--text-dark);
     overflow-x: hidden;
+    /* 모바일 스크롤 최적화 */
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* 모바일에서 텍스트 선택 허용 */
+p, h1, h2, h3, h4, h5, h6, span, div {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 .container {
@@ -46,6 +62,9 @@ body {
     padding: 1rem 0;
     transition: var(--transition);
     box-shadow: var(--shadow);
+    /* 모바일 성능 최적화 */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .nav-container {
@@ -69,7 +88,6 @@ body {
 .nav-logo h2:hover {
     color: var(--accent-color);
     transform: scale(1.05);
-    text-shadow: var(--glow);
 }
 
 .nav-logo h2::after {
@@ -106,8 +124,6 @@ body {
 .nav-link:hover {
     color: var(--primary-color);
     background: rgba(59, 130, 246, 0.1);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
 }
 
 .nav-link::after {
@@ -167,6 +183,9 @@ body {
     padding-top: 80px;
     position: relative;
     overflow: hidden;
+    /* 모바일 성능 최적화 */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .hero::before {
@@ -273,6 +292,9 @@ body {
     font-size: 1rem;
     position: relative;
     overflow: hidden;
+    /* 모바일 터치 최적화 */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .btn::before {
@@ -644,6 +666,9 @@ body {
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    /* 모바일 성능 최적화 */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .service-card::before {
@@ -935,7 +960,9 @@ body {
     overflow-y: auto;
     padding: 1.5rem;
     background: #f8fafc;
+    /* 모바일 스크롤 최적화 */
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 
 .message {
@@ -1439,179 +1466,144 @@ body {
     animation: fadeInUp 0.6s ease-out;
 }
 
-/* 스크롤 스무스 */
+/* 스크롤 스무스 - 모바일 최적화 */
 html {
     scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch; /* iOS 모멘텀 스크롤 */
+    -webkit-overflow-scrolling: touch;
 }
 
-/* 로딩 애니메이션 */
-.loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
+/* 모바일 터치 최적화 */
+* {
+    touch-action: manipulation;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+/* 모바일에서 스크롤 성능 향상 */
+body, html {
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
 }
 
-/* 텍스트 하이라이트 효과 */
-.highlight { background: none; }
-
-.highlight:hover { }
-
-/* 커서 효과 */
-.cursor-effect { position: relative; }
-
-.cursor-effect::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.cursor-effect:hover::after { }
-
-/* 타이핑 효과 */
-.typing-effect { border-right: none; animation: none; }
-
-@keyframes typing {
-    from { width: 0; }
-    to { width: 100%; }
-}
-
-@keyframes blink-caret {
-    from, to { border-color: transparent; }
-    50% { border-color: var(--primary-color); }
-}
-
-/* 텍스트 글로우 효과 */
-.hero-title[data-text] {
-    position: relative;
-    z-index: 2;
-    pointer-events: auto;
-}
-
-.hero-title[data-text]::before { display: none !important; }
-
-@keyframes glow-text {
-    0% { 
-        filter: blur(8px) brightness(1); 
-        opacity: 0.2; 
-        transform: scale(1);
+/* 모바일에서 성능 최적화 */
+@media (max-width: 768px) {
+    /* 모바일에서 복잡한 애니메이션 비활성화 */
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(0px); }
     }
-    50% { 
-        filter: blur(10px) brightness(1.1); 
-        opacity: 0.3; 
-        transform: scale(1.02);
+    
+    @keyframes glow {
+        0%, 100% { text-shadow: none; }
+        50% { text-shadow: none; }
     }
-    100% { 
-        filter: blur(12px) brightness(1.2); 
-        opacity: 0.4; 
-        transform: scale(1);
+    
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    
+    /* 모바일에서 transform 효과 최소화 */
+    .hero-title:hover,
+    .service-card:hover,
+    .contact-item:hover,
+    .credential-item:hover,
+    .stat-item:hover {
+        transform: none !important;
+    }
+    
+    /* 모바일에서 box-shadow 효과 최소화 */
+    .service-card:hover,
+    .contact-item:hover,
+    .credential-item:hover,
+    .stat-item:hover {
+        box-shadow: var(--shadow) !important;
     }
 }
 
-/* 호버 시 텍스트 변형 효과 */
-.hero-subtitle[data-text]::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--primary-color);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+/* 모바일에서 애니메이션 최적화 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
-.hero-subtitle:hover[data-text]::after { }
-
-/* 마그네틱 효과 */
-.magnetic {
-    transition: transform 0.3s ease;
+/* 모바일에서 추가 성능 최적화 */
+@media (max-width: 768px) {
+    /* 모바일에서 GPU 가속 활성화 */
+    .navbar,
+    .hero,
+    .service-card,
+    .contact-item,
+    .credential-item,
+    .stat-item {
+        will-change: auto;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+    }
+    
+    /* 모바일에서 스크롤 성능 향상 */
+    .container,
+    .hero-container,
+    .about-content,
+    .services-grid,
+    .contact-content {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+    }
+    
+    /* 모바일에서 불필요한 효과 비활성화 */
+    .service-icon::before,
+    .contact-item i::before,
+    .credential-item i::before {
+        display: none !important;
+    }
 }
 
-.magnetic:hover {
-    transform: scale(1.05);
-}
-
-/* 스크롤 기반 애니메이션 */
-.scroll-animate {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s ease;
-}
-
-.scroll-animate.animate {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* 3D 호버 효과 */
-.card-3d {
-    transform-style: preserve-3d;
-    transition: transform 0.3s ease;
-}
-
-.card-3d:hover {
-    transform: rotateY(10deg) rotateX(5deg);
-}
-
-/* 네온 효과 */
-.neon { text-shadow: none; animation: none; }
-
-@keyframes neon-pulse {
-    from { text-shadow: 0 0 5px var(--accent-color), 0 0 10px var(--accent-color), 0 0 15px var(--accent-color), 0 0 20px var(--accent-color); }
-    to { text-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color), 0 0 30px var(--accent-color), 0 0 40px var(--accent-color); }
-}
-
-/* 물결 효과 */
-.wave {
-    position: relative;
-    overflow: hidden;
-}
-
-.wave::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(59, 130, 246, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: all 0.6s ease;
-}
-
-.wave:hover::before {
-    width: 300px;
-    height: 300px;
-}
-
-/* 스켈레톤 로딩 */
-.skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: skeleton-loading 1.5s infinite;
-}
-
-@keyframes skeleton-loading {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+/* 모바일에서 호버 효과 비활성화 */
+@media (hover: none) and (pointer: coarse) {
+    .service-card:hover,
+    .contact-item:hover,
+    .credential-item:hover,
+    .stat-item:hover {
+        transform: none !important;
+        box-shadow: var(--shadow) !important;
+    }
+    
+    .btn:hover {
+        transform: none !important;
+    }
+    
+    .nav-link:hover {
+        transform: none !important;
+        background: none !important;
+    }
+    
+    /* 모바일에서 복잡한 애니메이션 비활성화 */
+    .service-card::before,
+    .contact-item::before,
+    .credential-item::before,
+    .stat-item::before {
+        display: none !important;
+    }
+    
+    /* 모바일에서 transform 애니메이션 비활성화 */
+    .service-card,
+    .contact-item,
+    .credential-item,
+    .stat-item {
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    /* 모바일에서 배경 효과 비활성화 */
+    .hero::before,
+    .about::before,
+    .services::before,
+    .appointment::after,
+    .contact::before,
+    .footer::before {
+        display: none !important;
+    }
 }
